@@ -1,0 +1,70 @@
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+UserSettings/
+
+# Unity cache
+/[Aa]ssets/AssetStoreTools*
+/[Ll]ibrary/PackageCache/
+
+# Burst
+[Bb]urstCache/
+
+# Crash and breakpoint dumps
+*.stackdump
+*.dmp
+
+# IDE settings
+.vscode/
+.vs/
+*.code-workspace
+
+# Visual Studio files
+*.user
+*.userprefs
+*.sln
+*.csproj
+*.pidb
+*.svd
+*.pdb
+
+# Rider
+.idea/
+*.sln.iml
+
+# Auto-generated project files
+ExportedObj/
+.consulo/
+*.unityproj
+
+# Build artifacts
+*.apk
+*.aab
+*.app
+*.exe
+*.ipa
+*.xcodeproj
+*.xcworkspace
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# TextMesh Pro
+[Aa]ssets/TextMesh Pro/*/Scripts/Editor/*
+
+# Other
+*.mdb
+*.opendb
+*.VC.db
+
+# PlasticSCM
+.plastic/
+
+# Cache for Unity Collaborate
+.collab/
