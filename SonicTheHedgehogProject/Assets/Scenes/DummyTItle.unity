@@ -1381,7 +1381,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1603054683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1400,7 +1400,7 @@ MonoBehaviour:
   - canvas: {fileID: 593136176}
     waitTillNext: 2
   - canvas: {fileID: 1218447302}
-    waitTillNext: 10
+    waitTillNext: 6
   - canvas: {fileID: 577940101}
     waitTillNext: 0
 --- !u!4 &1603054684
