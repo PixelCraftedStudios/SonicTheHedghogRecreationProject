@@ -1463,7 +1463,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1783892128}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.58, y: -2.39, z: 0}
+  m_LocalPosition: {x: -9, y: -2.39, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1516,7 +1516,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1783892128}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71e3a3ddb3aae064bb1732ae33c2adc8, type: 3}
   m_Name: 
@@ -1524,7 +1524,7 @@ MonoBehaviour:
   gravity: 0.21875
   terminalVelocity: -16
   jumpStrength: 6.5
-  grounded: 0
+  grounded: 1
   velocity: {x: 0, y: 0}
 --- !u!114 &1783892133
 MonoBehaviour:
@@ -1538,25 +1538,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 110f78d92164f0c4ab9e491dc4a7a620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 1
-  groundCheckDistance: 0.3
   groundAccel: 0.046875
   groundDecel: 0.5
-  topSpeed: 6
+  topSpeed: 12
   airAccel: 0.09375
-  airDrag: 0.96875
-  jumpStrength: 6.5
-  gravity: 0.21875
-  releaseCutFactor: 0.5
-  terminalVelocity: -16
-  slopeFactor: 0.125
-  grounded: 0
-  releasedJump: 0
-  rolling: 0
-  velocity: {x: 0, y: 0}
-  groundNormal: {x: 0, y: 1}
+  airDrag: 0.125
+  jumpKey: 32
 --- !u!1 &1893804216
 GameObject:
   m_ObjectHideFlags: 0

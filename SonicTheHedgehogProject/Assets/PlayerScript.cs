@@ -1,136 +1,110 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
+[RequireComponent(typeof(RetroRigidbody2D))]
 public class PlayerScript : MonoBehaviour
 {
-    public LayerMask groundMask;
-    public float groundCheckDistance = 0.3f;
+    [Header("Sonic Ground Physics")]
+    public float groundAccel = 0.046875f;   // Sonic 1
+    public float groundDecel = 0.5f;        // friction
+    public float topSpeed = 6f;             // Sonic 1
 
-    [Header("Sonic Ground Settings")]
-    public float groundAccel = 0.046875f * 60f;
-    public float groundDecel = 0.5f * 60f;
-    public float topSpeed = 6.0f;
+    [Header("Sonic Air Physics")]
+    public float airAccel = 0.09375f;       // double ground accel
+    public float airDrag = 0.125f;          // slows sideways in air
 
-    [Header("Air Settings")]
-    public float airAccel = 0.09375f * 60f;
-    public float airDrag = 0.96875f;
+    [Header("Controls")]
+    public KeyCode jumpKey = KeyCode.Space;
 
-    [Header("Jump Settings")]
-    public float jumpStrength = 6.5f;
-    public float gravity = 0.21875f * 60f;
-    public float releaseCutFactor = 0.5f;
-    public float terminalVelocity = -16f;
-
-    [Header("Slope Settings")]
-    public float slopeFactor = 0.125f;
-
-    [Header("State (Read Only)")]
-    public bool grounded;
-    public bool releasedJump;
-    public bool rolling;
-    public Vector2 velocity;
-    public Vector2 groundNormal = Vector2.up;
-
-    Rigidbody2D rb;
+    private RetroRigidbody2D retro;
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 0;
-        rb.freezeRotation = true;
-        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        retro = GetComponent<RetroRigidbody2D>();
     }
 
     void Update()
     {
-        HandleInput();
+        HandleJump();
     }
 
     void FixedUpdate()
     {
-        CheckGround();
-        ApplyPhysics();
-        rb.velocity = velocity;
+        HandleMovement();
     }
 
-    void HandleInput()
+    void HandleMovement()
     {
         float input = Input.GetAxisRaw("Horizontal");
+        Vector2 v = retro.velocity;
 
-        if (grounded && !rolling)
-            GroundMovement(input);
-        else if (!grounded)
-            AirMovement(input);
-
-        if (grounded && Input.GetButtonDown("Jump"))
-            Jump();
-
-        if (Input.GetButtonUp("Jump"))
-            releasedJump = true;
-    }
-
-    void GroundMovement(float input)
-    {
-        if (input != 0)
+        if (retro.grounded)
         {
-            velocity.x += input * groundAccel * Time.fixedDeltaTime;
-            velocity.x = Mathf.Clamp(velocity.x, -topSpeed, topSpeed);
+            // --------------------------
+            //       GROUND MOVEMENT
+            // --------------------------
+
+            if (input != 0)
+            {
+                // accelerate in input direction
+                v.x += input * groundAccel;
+
+                // clamp to Sonic top speed
+                if (Mathf.Abs(v.x) > topSpeed)
+                    v.x = Mathf.Sign(v.x) * topSpeed;
+            }
+            else
+            {
+                // apply friction
+                if (v.x > 0)
+                {
+                    v.x -= groundDecel;
+                    if (v.x < 0) v.x = 0;
+                }
+                else if (v.x < 0)
+                {
+                    v.x += groundDecel;
+                    if (v.x > 0) v.x = 0;
+                }
+            }
         }
         else
         {
-            velocity.x = Mathf.MoveTowards(velocity.x, 0, groundDecel * Time.fixedDeltaTime);
+            // --------------------------
+            //        AIR MOVEMENT
+            // --------------------------
+
+            if (input != 0)
+            {
+                v.x += input * airAccel;
+
+                // air cap
+                if (Mathf.Abs(v.x) > topSpeed)
+                    v.x = Mathf.Sign(v.x) * topSpeed;
+            }
+            else
+            {
+                // Sonic air drag slows horizontal movement
+                if (v.x > 0)
+                {
+                    v.x -= airDrag;
+                    if (v.x < 0) v.x = 0;
+                }
+                else if (v.x < 0)
+                {
+                    v.x += airDrag;
+                    if (v.x > 0) v.x = 0;
+                }
+            }
         }
 
-        float slopeAngle = Vector2.SignedAngle(groundNormal, Vector2.up);
-        float rad = slopeAngle * Mathf.Deg2Rad;
-        velocity.x += Mathf.Sin(rad) * -slopeFactor;
+        retro.velocity = v;
     }
 
-    void AirMovement(float input)
+    void HandleJump()
     {
-        if (input != 0)
-            velocity.x += input * airAccel * Time.fixedDeltaTime;
-
-        velocity.x *= airDrag;
-    }
-
-    void ApplyPhysics()
-    {
-        if (!grounded)
+        if (Input.GetKeyDown(jumpKey))
         {
-            velocity.y -= gravity * Time.fixedDeltaTime;
-            if (velocity.y < terminalVelocity)
-                velocity.y = terminalVelocity;
-        }
-
-        if (releasedJump && velocity.y > 0)
-            velocity.y *= releaseCutFactor;
-    }
-
-    void Jump()
-    {
-        velocity.y = jumpStrength;
-        grounded = false;
-        releasedJump = false;
-    }
-
-    void CheckGround()
-    {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down,
-            groundCheckDistance, groundMask);
-
-        bool wasGrounded = grounded;
-        grounded = hit.collider != null;
-
-        if (grounded)
-        {
-            groundNormal = hit.normal;
-            if (!wasGrounded && velocity.y < 0)
-                velocity.y = 0;
-        }
-        else
-        {
-            groundNormal = Vector2.up;
+            retro.Jump();
         }
     }
 }

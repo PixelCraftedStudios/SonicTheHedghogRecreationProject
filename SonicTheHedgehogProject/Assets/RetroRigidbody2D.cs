@@ -4,8 +4,8 @@ using UnityEngine;
 public class RetroRigidbody2D : MonoBehaviour
 {
     [Header("Sonic Gravity Settings")]
-    public float gravity = 0.21875f;      // classic sonic fall accel
-    public float terminalVelocity = -16f; // max fall speed
+    public float gravity = 0.21875f;
+    public float terminalVelocity = -16f;
     public float jumpStrength = 6.5f;
 
     [Header("State")]
@@ -17,39 +17,47 @@ public class RetroRigidbody2D : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 0f;  // disable Unity physics gravity
+        rb.gravityScale = 0f;
         rb.freezeRotation = true;
     }
 
     void FixedUpdate()
     {
         ApplyGravity();
+
+        // finally apply our custom physics to the real Rigidbody
         rb.velocity = velocity;
     }
 
     void ApplyGravity()
     {
-        if (grounded) return;
+        // still falling
+        if (!grounded)
+        {
+            velocity.y -= gravity;
 
-        velocity.y -= gravity;
-
-        if (velocity.y < terminalVelocity)
-            velocity.y = terminalVelocity;
+            if (velocity.y < terminalVelocity)
+                velocity.y = terminalVelocity;
+        }
+        else
+        {
+            // if grounded, we don't force stop the X axis
+            // we only stop downward Y
+            if (velocity.y < 0)
+                velocity.y = 0;
+        }
     }
 
     public void Jump()
     {
         if (!grounded) return;
+
         velocity.y = jumpStrength;
         grounded = false;
     }
 
-    // you call this from a ground check script
     public void SetGrounded(bool state)
     {
         grounded = state;
-
-        if (state && velocity.y < 0)
-            velocity.y = 0;
     }
 }
